@@ -1,0 +1,24 @@
+# .gitignore
+
+# Ignore the virtual environment directory
+venv/
+
+# Compiled Python files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.so
+
+# Ignore IDE project files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Additional files and directories to ignore
+# Add other files/directories here that you don't want to track in Git

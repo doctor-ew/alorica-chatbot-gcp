@@ -1,0 +1,11 @@
+# .gcloudignore
+
+# Ignore the virtual environment directory
+venv/
+
+# Ignore git directories and files
+.git
+.gitignore
+
+# Additional files and directories to ignore
+# Add other files/directories here that you don't want to include in the deployment
