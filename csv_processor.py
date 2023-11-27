@@ -1,18 +1,33 @@
+from google.cloud import storage
 import pandas as pd
+from io import StringIO
 
-def process_csv(file_path):
-    # Load the CSV file
-    data = pd.read_csv(file_path)
+def download_blob_to_dataframe(bucket_name, source_blob_name):
+    """Downloads a blob from the bucket and loads it into a DataFrame."""
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(source_blob_name)
+    # Download the contents of the blob as a string and then convert it to a DataFrame
+    data = blob.download_as_text()
+    return pd.read_csv(StringIO(data))
+
+def process_csv(bucket_name, blob_name):
+    # Load the CSV file from GCS
+    data = download_blob_to_dataframe(bucket_name, blob_name)
 
     # Extracting intents and responses
     intents_responses = {}
     for _, row in data.iterrows():
-        # Here, the URL is used to create a unique intent name
-        intent_name = row['loc'].split('/')[-1]  # Example: 'subscription-management'
-        intents_responses[intent_name] = row['description_clean']
+        print("|-o-| Processing row", row)
+        if 'loc' in data.columns:
+            intent_name = row['loc'].split('/')[-1]  # Example: 'subscription-management'
+            intents_responses[intent_name] = row['description']
+        else:
+            print("Column 'loc' not found in CSV.")
 
     return intents_responses
 
 # Example usage
-file_path = 'https://storage.cloud.google.com/alorica-sitemap/ChatGPT_Alorica_Sitemap.csv'
-intents_responses = process_csv(file_path)
+bucket_name = 'alorica-sitemap'
+blob_name = 'ChatGPT_Alorica_Sitemap.csv'
+intents_responses = process_csv(bucket_name, blob_name)
